@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>For You, [Her Name]</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,500&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fff0f5;--card:#fff;--pink:#ff6fa5;--deep:#d6336c;--text:#5a2a3f;--soft:#ffd6e5}
+@media (prefers-color-scheme:dark){:root{--bg:#2b1420;--card:#3a1c2b;--text:#ffe3ee;--soft:#5a2a3f}}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Quicksand',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;text-align:center}
+h1,h2{font-family:'Playfair Display',serif;color:var(--deep);margin:0 0 .5em}
+section{max-width:860px;margin:auto;padding:64px 20px}
+.hero{min-height:90vh;display:flex;flex-direction:column;justify-content:center;align-items:center;background:linear-gradient(160deg,var(--soft),var(--bg))}
+.hero h1{font-size:clamp(2.4rem,8vw,4.5rem)}
+.heart{font-size:3rem;animation:beat 1.4s infinite}
+@keyframes beat{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
+.letter{background:var(--card);border-radius:20px;padding:32px;box-shadow:0 10px 30px rgba(214,51,108,.15);text-align:left}
+.letter p{margin:0 0 1em}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px}
+.slot{background:var(--card);border-radius:16px;padding:10px;box-shadow:0 6px 18px rgba(214,51,108,.15)}
+.slot .frame{aspect-ratio:1;border-radius:10px;border:2px dashed var(--pink);display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:pointer;color:var(--pink);font-size:.9rem;padding:8px}
+.slot img{width:100%;height:100%;object-fit:cover}
+.slot .cap{margin-top:8px;font-style:italic;outline:none}
+.promise{display:grid;gap:14px;text-align:left}
+.promise div{background:var(--card);border-left:5px solid var(--pink);border-radius:12px;padding:14px 18px}
+button{font:inherit;font-weight:600;background:var(--pink);color:#fff;border:0;border-radius:999px;padding:12px 28px;cursor:pointer;box-shadow:0 6px 16px rgba(255,111,165,.4)}
+button:hover{background:var(--deep)}
+#music{position:fixed;right:16px;bottom:16px;z-index:5;padding:10px 16px}
+#intro{position:fixed;inset:0;z-index:10;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .8s}
+#intro.hide{opacity:0;pointer-events:none}
+footer{padding:40px 20px;color:var(--deep)}
+</style>
+</head>
+<body>
+
+<div id="intro">
+  <div class="heart">💌</div>
+  <h2>I made something for you</h2><p style="margin:0">Just because 💗</p>
+  <button id="open">Open it</button>
+</div>
+
+<audio id="song" src="song.mp3" loop></audio>
+<button id="music" title="Play / pause music">🎵 Pause</button>
+
+<header class="hero">
+  <div class="heart">💗</div>
+  <h1>Hi, [Her Name]</h1>
+  <p>Distance can't change how much you mean to me.</p>
+</header>
+
+<section>
+  <h2>A note from me</h2>
+  <div class="letter">
+    <p>Dear [Her Name],</p>
+    <p>[Thank her for forgiving you, in your own words.]</p>
+    <p>[Be honest that this was our first big fight and neither of us knew how to handle it, and that's okay.]</p>
+    <p>[Say you want to figure out how to talk through hard things together, even from far away.]</p>
+    <p>No pressure to reply to this. I just wanted you to know I'm here.</p>
+    <p>Always yours,<br>[Your Name]</p>
+  </div>
+</section>
+
+<section>
+  <h2>Our best moments</h2>
+  <p>A few of my favorite memories with you. This is what I think about 🌸</p>
+  <div class="grid" id="grid"></div>
+</section>
+
+<section>
+  <h2>What I love about us</h2>
+  <div class="promise">
+    <div>💕 [Something you love about her]</div>
+    <div>💕 [Something you love about how we are together]</div>
+    <div>💕 [Something you're looking forward to doing together]</div>
+  </div>
+</section>
+
+<footer>
+  <h2>Call me whenever you feel like it?</h2>
+  <button id="yes">Sounds good 💖</button>
+  <p id="reply"></p>
+</footer>
+
+<script>
+// Photo slots: put your files in a "photos" folder named 1.jpg, 2.jpg, ... 6.jpg
+const captions=["The day we met","Our first trip","That silly night","Your favorite place","Us being us","Just because I love this one"];
+const grid=document.getElementById('grid');
+captions.forEach((c,i)=>{
+  const s=document.createElement('div');s.className='slot';
+  const f=document.createElement('div');f.className='frame';
+  const img=new Image();img.src='photos/'+(i+1)+'.jpg';
+  img.onload=()=>{f.innerHTML='';f.appendChild(img)};
+  f.textContent='📷 Add photo '+(i+1);
+  const inp=document.createElement('input');inp.type='file';inp.accept='image/*';inp.hidden=true;
+  inp.onchange=()=>{if(inp.files[0]){const p=new Image();p.src=URL.createObjectURL(inp.files[0]);f.innerHTML='';f.appendChild(p)}};
+  f.onclick=()=>inp.click();
+  const cap=document.createElement('div');cap.className='cap';cap.contentEditable=true;cap.textContent=c;
+  s.append(f,inp,cap);grid.appendChild(s);
+});
+// Music
+const song=document.getElementById('song'),mb=document.getElementById('music');
+function sync(){mb.textContent=song.paused?'🎵 Play':'🎵 Pause'}
+document.getElementById('open').onclick=()=>{document.getElementById('intro').classList.add('hide');song.play().catch(()=>{}).finally(sync)};
+mb.onclick=()=>{song.paused?song.play():song.pause();sync()};
+document.getElementById('yes').onclick=()=>{document.getElementById('reply').textContent='Cannot wait to talk to you. Love you. 💗'};
+</script>
+</body>
+</html>
